@@ -1,0 +1,73 @@
+phase_1:
+Border relations with Canada have never been better.
+
+phase_2:
+1 2 4 8 16 32
+
+phase_3:
+1 311
+
+phase_4(input);
+1. 先读取2个整数 x, y 从 input
+2. func4(x, 0, 0xe)
+3. 
+func4(a, b, c) {
+    int t = c - b;
+    if (t < 0) {
+        t = t + 1;
+    }
+    t /= 2;
+    int d = t + b;
+    if (d <= a) {
+        t = 0;
+        if (d >= a) {
+            return t;
+        } else {
+            t = func4(a, d+1, c);
+            return 2 * t + 1;
+        }
+    } else {
+        t = func4(a, b, d-1);
+        return 2 * t;
+    }
+}
+
+4. phase_4 在 func4 返回 0, 时跳过bomb, 同时
+   func4 函数在 d == a 时， return 0, 
+5. func4(x, 0, 0xe), 计算 d = t + b = 7, 所以输入x = 7
+6. 对于 y 值，观察phase_4汇编代码，很简单就可以发现y = 0
+7, x = 7, y = 0
+7 0
+
+phase_5(input)
+1.
+callq  0x40131b <string_length>
+cmp    $0x6,%eax
+2. input 长度必须是 6
+3. 后续流程:
+// 查看 x/s $0x40245e, 这个内存值
+char* s = "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"
+int i = 0;
+char ls[7];
+for (i = 0; i < 6; ++i) {
+    int index = input[i] & 0xf;
+    ls[i] = s[index];
+}
+ls[6] = '\0';
+4. 然后 ls 和 "flyers" (x/s 0x40245e) 比较是否相等, 相等就跳过bomb了
+5. 所以 input 输入的字符的ascii的后4bit位的值作为下标，在 s 中找到 "flyers".
+6. 简单观察 "flyers" 在 s 的下表未 9, 15, 14, 5, 6, 7
+7. 所以 input = "Y_^UVW" 符合条件(当然还有其它的)
+
+phase_6(input)
+1. 初始读取 6 个整数
+2. 6 个整数必须不同且 [1, 6] 之间, 那么 6个整数就是 1, 2, 3, 4, 5, 6 的排列组合
+3. 输入的整数存储到数组 a[6], 然后用做 a[i] = 7 - a[i]
+4. "x 0x6032d0", 显示 node1 字样, 猜测 0x6032d0 为一个链表开头
+5. 0x6032d0 是链表开头,
+6. 对于第 i 个输入整数 x, 那么把链表的第x个node，放入数组 b[i] = node_x(第x个node)
+7. 遍历 b 这个node*数组, 根据数组顺序连接node, 也就是 b[i]->next = b[i+1],
+8. 最后新的链表必须从大到小排列,
+9. 观察原始链表包含的值的顺序 332, 168, 924, 691, 477, 443
+10. 排序后 923, 691, 447, 443, 332, 168 -> 对应的下标 3, 4, 5, 6, 1, 2
+11. 第3步骤中我们用 7 - a[i], 那么 a = {4, 3, 2, 1, 6, 5}
