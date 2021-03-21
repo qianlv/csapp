@@ -273,6 +273,9 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
+  int mask = x >> 31; // if x < 0, then mask = 0xFFFFFFFF, else mask = 0x00000000
+  // if (x < 0) x = ~x else x = x.
+  x = (mask & ~x) | (~mask & x); // if x < 0 按位取方, x >= 0 则 x 不变
   return 0;
 }
 //float
