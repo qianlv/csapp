@@ -156,7 +156,7 @@ int mm_init(void)
     heap_list += (2 * WSIZE);
     free_list = NULL;
 
-    if (extend_heap(CHUNKSIZE / WSIZE) == NULL) {
+    if (extend_heap(4) == NULL) {
         return -1;
     }
 
