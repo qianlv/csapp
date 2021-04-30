@@ -354,14 +354,14 @@ void do_bgfg(char **argv)
     if (strcmp(argv[0], "bg") == 0) {
         if (job && job->state == ST) {
             job->state = BG;
-            kill(job->pid, SIGCONT);
+            kill(-job->pid, SIGCONT);
         }
     } else {
         if (job && fgpid(jobs) == 0) {
             int state = job->state;
             job->state = FG;
             if (state == ST) {
-                kill(job->pid, SIGCONT);
+                kill(-job->pid, SIGCONT);
             }
         }
     }
@@ -447,7 +447,7 @@ void sigint_handler(int sig)
 {
     pid_t pid = fgpid(jobs);
     if (pid != 0) {
-        kill(pid, SIGINT);
+        kill(-pid, SIGINT);
     }
     return;
 }
@@ -461,7 +461,7 @@ void sigtstp_handler(int sig)
 {
     pid_t pid = fgpid(jobs);
     if (pid != 0) {
-        kill(pid, SIGTSTP);
+        kill(-pid, SIGTSTP);
     }
     return;
 }
